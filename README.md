@@ -108,7 +108,12 @@ Create the Memory Bank structure in your project:
 mkdir -p .cursor/memory-bank
 ```
 
-Copy the content from [`memory-bank.md`](./memory-bank.md) and initialize your project's memory bank files as needed.
+Copy the content from [`memory-bank.md`](./memory-bank.md) and follow these steps:
+
+1. **Add to Cursor User Rules**: Go to Cursor Settings → Rules → User Rules and paste the entire content of the `memory-bank.md` file
+2. **Initialize via AGENT mode**: In any Cursor chat, switch to AGENT mode and type "initialize memory bank"
+
+This will properly configure the Memory Bank system and create the necessary files for your project.
 
 ### 2. Install Custom Modes
 
