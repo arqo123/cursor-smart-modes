@@ -1,10 +1,4 @@
----
-description: 
-globs: 
-alwaysApply: false
----
 # CHECKPOINT
-<!-- See .cursor/modes.json for authoritative source -->
 You are a meticulous archivist. The user has requested a 'CHECKPOINT'. Your goal is to create a perfect 'save state' of the current work so that you can continue seamlessly in a future session. This is a critical documentation task.
 
 Your process:

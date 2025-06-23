@@ -1,88 +1,4 @@
-# 🤖 AI-Driven Development: The Phased-Execution Workflow Guide
-
-This document outlines a structured methodology for collaborating with an AI assistant (like Cursor) on software development projects. The primary goal of this workflow is to overcome the inherent limitations of Large Language Models (LLMs), such as finite context windows and lack of session memory ("amnesia"), by establishing a robust, stateful, and predictable development process.
-
-This system turns the AI from a simple "code generator" into a true development partner that can manage complex, multi-step tasks over extended periods.
-
-## 📜 Core Philosophy
-
-Our methodology is built on four key principles:
-
-1.  🧠 **The Memory Bank is a Second Brain:** The AI's memory is volatile. We counteract this by maintaining a `Memory Bank` – a collection of Markdown files (`./.cursor/memory-bank/`) that serve as the project's persistent, long-term memory. The AI **must** consult this brain at the start of every session.
-2.  🧩 **Divide and Conquer:** Large tasks are the enemy of limited context windows. All significant work is broken down into logical **Phases**. Each phase is designed to be small enough to be completed within a single, focused AI session.
-3.  💾 **Checkpoints are Non-Negotiable:** State is managed explicitly. After a planning session or the completion of a development phase, a **Checkpoint** is created. This process saves the current state of work into the Memory Bank, ensuring no progress is lost and providing a clean starting point for the next phase.
-4.  🗣️ **Humans Steer, AI Executes:** The workflow is designed to keep the developer in the driver's seat. The AI proposes plans, executes focused tasks, and manages documentation, but the developer gives the green light at every critical juncture.
-
----
-
-## 🛠️ The Core Modes (Custom Rules)
-
-Our workflow is orchestrated by a set of custom modes defined in `.cursor/modes.json`. Each mode assigns a specific role and set of instructions to the AI.
-
-### `PLAN`
--   **🎯 Goal:** To transform a user request into a structured, multi-phase implementation plan.
--   **⚙️ Primary Function:** Acts as a software architect. It engages in a Q&A session to remove ambiguity and then produces a detailed plan broken down into context-friendly **Phases**.
--   **💡 Key Behavior:** For complex plans, it automatically creates a `CHECKPOINT` and recommends starting the execution (`ACT`) in a new chat window to ensure a clean context.
-
-### `ACT`
--   **🎯 Goal:** To execute a single phase of an approved plan.
--   **⚙️ Primary Function:** Acts as a focused engineer. It reads the current context from the Memory Bank, implements **only one phase**, and documents its work.
--   **💡 Key Behavior:** It is strictly forbidden from starting the next phase. Its final, mandatory action is to propose running `CHECKPOINT` to save the new state.
-
-### `CHECKPOINT`
--   **🎯 Goal:** To save the current state of the project to the Memory Bank.
--   **⚙️ Primary Function:** Acts as a meticulous archivist. It synthesizes the latest progress and updates the core context files (`activeContext.md`, `progress.md`).
--   **💡 Key Behavior:** Creates a "save game" state, clearly documenting what was just completed and what the *exact* next step is.
-
-### `FINISH`
--   **🎯 Goal:** To formally close out a completed feature.
--   **⚙️ Primary Function:** Acts as a project finalizer. It cleans up the project's state after all phases are complete.
--   **💡 Key Behavior:** It archives the task in `progress.md`, resets the `activeContext.md` to a clean slate, and confirms that the project is ready for a new task.
-
-### `STRATEGY_SESSION`
--   **🎯 Goal:** To conduct a deep-dive planning session for very large, complex epics (e.g., from a PRD).
--   **⚙️ Primary Function:** Acts as a Solutions Architect. It runs an extended, interactive discovery session before generating a highly detailed, multi-file plan.
--   **💡 Key Behavior:** Unlike `PLAN`, its primary output is a structured set of plan files in a new directory (`./ai/<plan-name>/`), designed for maximum clarity on massive features.
-
----
-
-## 🌊 Workflows in Action
-
-This system adapts to the size of the task.
-
-### Large Task Workflow (Multi-Phase)
-
-This is the most common workflow for new features. It ensures context is managed perfectly across multiple sessions.
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant AI (Cursor)
-
-    User->>AI (Cursor): @PLAN Build a new analytics dashboard.
-    Note over AI (Cursor): Q&A Session to clarify requirements.
-    AI (Cursor)->>User: Here is the 4-phase plan. I've created a CHECKPOINT. Please start a new chat and run @ACT for Phase 1.
-    
-    %% New Chat Window %%
-    User->>AI (Cursor): @ACT
-    Note over AI (Cursor): Reads CHECKPOINT, executes Phase 1.
-    AI (Cursor)->>User: Phase 1 complete. Please run @CHECKPOINT.
-    User->>AI (Cursor): @CHECKPOINT
-    AI (Cursor)->>User: ✅ CHECKPOINT CREATED.
-    
-    User->>AI (Cursor): @ACT
-    Note over AI (Cursor): Reads CHECKPOINT, executes Phase 2.
-    AI (Cursor)->>User: Phase 2 complete. Please run @CHECKPOINT.
-    User->>AI (Cursor): @CHECKPOINT
-    AI (Cursor)->>User: ✅ CHECKPOINT CREATED.
-    
-    Note right of User: ... Process repeats for all phases ...
-    
-    User->>AI (Cursor): @FINISH
-    AI (Cursor)->>User: ✅ FINISHED. Analytics dashboard marked as complete. Project is ready for a new task.
-```
-
-# Cursor Smart Modes
+ # Cursor Smart Modes
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
@@ -102,24 +18,17 @@ The challenge with Cursor's cost-effective approach is how it handles context wi
 
 ### 1. Memory Bank Initialization
 
-Create the Memory Bank structure in your project:
-
-```bash
-mkdir -p .cursor/memory-bank
-```
-
 Copy the content from [`memory-bank.md`](./memory-bank.md) and follow these steps:
 
 1. **Add to Cursor User Rules**: Go to Cursor Settings → Rules → User Rules and paste the entire content of the `memory-bank.md` file
 2. **Initialize via AGENT mode**: In any Cursor chat, switch to AGENT mode and type "initialize memory bank"
 
-This will properly configure the Memory Bank system and create the necessary files for your project.
+Memory bank initialization happens automatically when you type 'initialize memory bank' in AGENT mode, provided the memory-bank.md content has already been added to User Rules.
 
-### 2. Install Custom Modes
+### 2. Setup Custom Modes
 
-1. Copy [`.cursor/modes.json`](./.cursor/modes.json) to your project's `.cursor/` directory
-2. Review the individual mode files in [`/modes/`](./modes/) for detailed explanations
-3. Configure Cursor according to the [Configuration Table](#configuration-table) below
+1. Review the individual mode files in [`/modes/`](./modes/) for detailed explanations
+2. Configure Cursor according to the [Configuration Table](#configuration-table) below
 
 ### 3. Start Using Modes
 
@@ -202,11 +111,42 @@ Configure each mode in Cursor's settings as follows:
 
 | Mode | Recommended Model | Enable in Cursor | Disable in Cursor |
 |------|------------------|------------------|-------------------|
-| **PLAN** | GPT-4o / Claude 3 Opus | ✅ Search, Web, Codebase, List directory, Search files, Read file, Fetch rules | ❌ Edit & Reapply, Delete file, Terminal, Run |
-| **ACT** | GPT-4o / Claude 3 Opus | ✅ Search, Web, Codebase, List directory, Search files, Read file, Fetch rules, Edit & Reapply, Terminal | ❌ Delete file |
-| **CHECKPOINT** | Claude 3 Sonnet / Haiku | ✅ Read file, Edit & Reapply | ❌ Delete file, Terminal, Run, Web, Codebase |
-| **FINISH** | Claude 3 Sonnet / Haiku | ✅ Read file, Edit & Reapply | ❌ Delete file, Terminal, Run, Web, Codebase |
-| **STRATEGY_SESSION** | GPT-4o / Claude 3 Opus | ✅ Search, Web, Codebase, List directory, Search files, Read file, Fetch rules, Edit & Reapply | ❌ Terminal, Run |
+| **📋 PLAN** | GPT-o3, Claude 4 Thinking, Gemini 2.5 Pro | ✅ **Search** (entire category)<br>✅ **Read file, Fetch rules** | ❌ **Edit** (entire category)<br>❌ **Run** (entire category)<br>❌ **MCP** (servers) |
+| **⚡ ACT** | Claude 4, GPT-4.1 | ✅ **Search** (entire category)<br>✅ **Edit** (entire category)<br>✅ **Run** (entire category) | ❔ **MCP** (only if needed) |
+| **💾 CHECKPOINT** | Auto / Claude 4, GPT-4.1 | ✅ **Read file, Fetch rules**<br>✅ **Edit** (entire category) | ❌ **Run** (entire category)<br>❌ **MCP** (servers)<br>❌ **Web, Codebase** |
+| **✅ FINISH** | Auto / Claude 4, GPT-4.1 | ✅ **Read file, List directory, Search files, Grep**<br>✅ **Edit & Reapply** | ❌ **Delete file**<br>❌ **Run** (entire category)<br>❌ **MCP** (servers)<br>❌ **Codebase, Web** |
+| **🧠 STRATEGY_SESSION** | GPT-o3, Claude 4 Thinking, Gemini 2.5 Pro | ✅ **Search** (entire category)<br>✅ **Edit** (entire category) | ❌ **Run** (entire category) |
+
+### Detailed Tool Configuration
+
+**📋 PLAN Mode** - Deep analysis without making changes:
+- **✅ Search Category**: Codebase analysis, Web research, Grep/Search files for dependencies, List directory for structure navigation, Read file for Memory Bank and code analysis, Fetch rules for understanding existing patterns
+- **❌ Edit Category**: Prevention against accidental modifications during planning phase
+- **❌ Run Category**: No terminal commands needed for planning
+- **❌ MCP**: Not relevant for planning phase
+
+**⚡ ACT Mode** - Full implementation capabilities:
+- **✅ Search Category**: Continued need for reading files, finding definitions, and web research during implementation
+- **✅ Edit Category**: Core functionality for writing and modifying code
+- **✅ Run Category**: Essential for testing, installing dependencies, compilation, and running development servers
+- **❔ MCP**: Enable only if your project requires server operations
+
+**💾 CHECKPOINT Mode** - Focused state saving:
+- **✅ Limited Search**: Only Read file and Fetch rules needed for reviewing files to update
+- **✅ Edit Category**: Essential for updating Memory Bank files (.md and .cursorrules)
+- **❌ Run Category**: State saving doesn't require terminal operations
+- **❌ Web/Codebase**: Not needed for summarization tasks
+
+**✅ FINISH Mode** - Clean Memory Bank operations:
+- **✅ Selective Search**: Read file (essential), List directory/Search files/Grep (helpful for locating files), but exclude Codebase/Web (work is already complete)
+- **✅ Edit & Reapply**: Critical for updating progress.md and activeContext.md
+- **❌ Delete file**: Safety measure against accidental file deletion
+- **❌ Run Category**: Finalization doesn't require terminal commands
+
+**🧠 STRATEGY_SESSION Mode** - Comprehensive planning:
+- **✅ Search Category**: Essential for Q&A phase and thorough analysis
+- **✅ Edit Category**: Required for generating detailed implementation plans
+- **❌ Run Category**: Planning doesn't require terminal operations
 
 *Based on Cursor's tool categories as shown in the settings panel*
 
@@ -214,7 +154,7 @@ Configure each mode in Cursor's settings as follows:
 
 ### Large Task (Multi-Phase)
 ```
-@PLAN → CHECKPOINT → [New Chat] @ACT → @CHECKPOINT → [New Chat] @ACT → ... → @FINISH
+@PLAN → [New Chat] @ACT → @CHECKPOINT → [New Chat] @ACT → ... → @FINISH
 ```
 
 **Key Points:**
@@ -224,7 +164,7 @@ Configure each mode in Cursor's settings as follows:
 
 ### Medium Task  
 ```
-@PLAN → @CHECKPOINT → [New Chat] @ACT → @FINISH
+@PLAN → [New Chat] @ACT → @FINISH
 ```
 For tasks needing formal planning but executable in one phase.
 
@@ -267,23 +207,6 @@ graph TD
     style B1 fill:#e6f3ff,stroke:#333,stroke-width:2px
     style C1 fill:#e6f3ff,stroke:#333,stroke-width:2px  
     style D1 fill:#e6f3ff,stroke:#333,stroke-width:2px
-```
-
-## 📁 Repository Structure
-
-```
-cursor-smart-modes/
-├── .cursor/
-│   └── modes.json              # Mode definitions for Cursor
-├── modes/                      # Human-readable mode documentation
-│   ├── PLAN.mdc
-│   ├── ACT.mdc  
-│   ├── CHECKPOINT.mdc
-│   ├── FINISH.mdc
-│   └── STRATEGY_SESSION.mdc
-├── memory-bank.md              # Memory Bank documentation
-├── README.md                   # This file
-└── LICENSE                     # MIT License
 ```
 
 ## 🔄 Workflow Diagrams
