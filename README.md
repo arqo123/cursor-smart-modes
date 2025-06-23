@@ -37,7 +37,167 @@ In any Cursor chat, simply type:
 - `@ACT` - Execute a single phase of work  
 - `@CHECKPOINT` - Save current state
 - `@FINISH` - Close out completed work
-- `@STRATEGY_SESSION` - Deep planning for complex features
+- `@ARCHITECT` - Deep planning for complex features
+
+## 📖 Real-Life Usage Scenarios
+
+Here are practical examples showing how developers use the smart modes system in real projects:
+
+### Scenario 1: Building a Complete Feature (Large Task)
+
+**The Request:** "Build an analytics dashboard for our e-commerce app"
+
+```
+Developer: @PLAN Build an analytics dashboard for our e-commerce app.
+
+Cursor (PLAN): I need to understand this better. Let me ask some questions:
+1. What specific metrics do you want to track? (sales, user behavior, etc.)
+2. What's your current tech stack?
+3. Do you need real-time data or daily reports?
+4. Who will be the primary users of this dashboard?
+5. Any existing analytics tools we need to integrate with?
+6. What's your timeline and priority level?
+
+[After Q&A session...]
+
+Here's my 4-phase implementation plan:
+- Phase 1: Database schema and data collection endpoints
+- Phase 2: Analytics processing service 
+- Phase 3: Dashboard UI components
+- Phase 4: Integration and testing
+
+This is a multi-phase task. I've saved the plan in CHECKPOINT. To ensure clean context, please open a new chat and run @ACT to begin Phase 1.
+
+Developer: (Opens new chat) @ACT
+
+Cursor (ACT): Reading Memory Bank... Starting Phase 1: Database schema and data collection.
+[Implements database migrations, API endpoints, data models...]
+Phase 1 complete and documented. To safely save this progress, please run @CHECKPOINT.
+
+Developer: @CHECKPOINT
+
+Cursor (CHECKPOINT): ✅ CHECKPOINT CREATED
+Phase 1 progress saved to Memory Bank. Ready for Phase 2.
+
+Developer: (Opens new chat) @ACT
+
+Cursor (ACT): Reading Memory Bank... Starting Phase 2: Analytics processing service.
+[Implements data aggregation, caching, scheduled jobs...]
+Phase 2 complete. Please run @CHECKPOINT.
+
+[Process continues through all phases...]
+
+Developer: @FINISH
+
+Cursor (FINISH): ✅ PROJECT COMPLETED
+Analytics dashboard marked as finished. All phases documented in progress.md.
+Memory Bank reset for next assignment.
+```
+
+### Scenario 2: Quick Enhancement (Small Task)
+
+**The Request:** "Add loading states and error handling to the contact form"
+
+```
+Developer: @PLAN Add loading states and error handling to our contact form
+
+Cursor (PLAN): I've analyzed your contact form in `components/ContactForm.tsx`. I can see it's missing:
+1. Loading spinner during form submission
+2. Error handling for failed submissions  
+3. Success message after successful submission
+4. Form validation feedback
+
+This is a straightforward enhancement that can be completed in one phase. The form already has basic structure and API integration. Should I proceed with @ACT in this same chat?
+
+Developer: Yes, go ahead.
+
+Cursor (ACT): Implementing form enhancements...
+[Updates ContactForm.tsx with loading states, error handling, success messages]
+[Adds form validation with user feedback]
+[Updates CSS for loading spinner and message styling]
+[Tests form behavior with success/error scenarios]
+
+Enhanced contact form with:
+✅ Loading spinner during submission
+✅ Error handling with user-friendly messages
+✅ Success confirmation message
+✅ Real-time validation feedback
+✅ Proper form state management
+
+Developer: @FINISH
+
+Cursor (FINISH): ✅ TASK COMPLETED
+Contact form enhancements documented in progress.md. Form now provides proper user feedback for all interaction states.
+```
+
+### Scenario 3: Complex Architecture Planning (Architect Session)
+
+**The Request:** "We need to redesign our user authentication system for better security"
+
+```
+Developer: @ARCHITECT Redesign our authentication system for better security
+
+Cursor (ARCHITECT): This is a critical system change. Let me conduct a thorough analysis:
+
+1. Current authentication method? (JWT, sessions, OAuth?)
+2. What security concerns are you addressing?
+3. Do you need to maintain backward compatibility?
+4. Are you considering multi-factor authentication?
+5. What's your user base size?
+6. Any compliance requirements (GDPR, HIPAA, etc.)?
+7. Timeline constraints?
+8. Do you want to use third-party auth providers?
+
+[Extended Q&A session...]
+
+Based on our discussion, here's the comprehensive approach:
+
+**SECURITY AUDIT PHASE**
+- Review current vulnerabilities
+- Analyze session management
+- Check password policies
+
+**DESIGN PHASE** 
+- JWT → OAuth 2.0 + PKCE migration
+- Multi-factor authentication integration
+- Session management overhaul
+
+**IMPLEMENTATION PHASES**
+- Phase 1: New auth service architecture
+- Phase 2: Database schema migration
+- Phase 3: Frontend auth flow redesign
+- Phase 4: MFA implementation
+- Phase 5: Migration plan for existing users
+- Phase 6: Testing and security audit
+
+I've created a detailed plan directory with implementation specifics for each phase.
+This is a 6-phase project. Ready to start with @PLAN for Phase 1?
+
+Developer: Perfect. Let's begin.
+[Opens new chat] @PLAN Start Phase 1 of the authentication redesign.
+
+[Development continues through structured phases...]
+```
+
+### 🎯 PLAN vs ARCHITECT: When to Use Which?
+
+Understanding when to use **@PLAN** versus **@ARCHITECT** is crucial for optimal workflow:
+
+| Aspect | **@PLAN Mode** | **@ARCHITECT Mode** |
+|--------|----------------|---------------------|
+| **Purpose** | Feature implementation planning | System architecture & design decisions |
+| **Scope** | Single feature or task | Multiple interconnected systems |
+| **Duration** | 10-30 minutes | 1-3 hours |
+| **Q&A Depth** | 4-6 focused questions | 15-25 comprehensive questions |
+| **Output** | Implementation phases | Detailed system design + implementation phases |
+| **When to Use** | "Add user profiles", "Build search feature" | "Redesign authentication", "Scale database architecture" |
+| **Best For** | Ready-to-implement features | Features requiring architectural decisions |
+
+**Examples:**
+- **Use @PLAN**: Adding a contact form, implementing dark mode, fixing performance issues
+- **Use @ARCHITECT**: Microservices migration, security overhaul, multi-tenant architecture
+
+These scenarios demonstrate how the smart modes adapt to different project scales - from simple fixes to complex architectural changes - while maintaining context and ensuring nothing gets lost between sessions.
 
 ## 🧠 Memory Bank System
 
@@ -99,7 +259,7 @@ Our workflow uses five specialized modes, each with a specific role:
 - Resets `activeContext.md` for new tasks
 - Confirms project is ready for next assignment
 
-### STRATEGY_SESSION Mode
+### ARCHITECT Mode
 **Goal:** Deep-dive planning for large, complex features
 - Extended interactive discovery sessions
 - Generates detailed multi-file implementation plans
@@ -111,11 +271,11 @@ Configure each mode in Cursor's settings as follows:
 
 | Mode | Recommended Model | Enable in Cursor | Disable in Cursor |
 |------|------------------|------------------|-------------------|
-| **📋 PLAN** | GPT-o3, Claude 4 Thinking, Gemini 2.5 Pro | ✅ **Search** (entire category)<br>✅ **Read file, Fetch rules** | ❌ **Edit** (entire category)<br>❌ **Run** (entire category)<br>❌ **MCP** (servers) |
-| **⚡ ACT** | Claude 4, GPT-4.1 | ✅ **Search** (entire category)<br>✅ **Edit** (entire category)<br>✅ **Run** (entire category) | ❔ **MCP** (only if needed) |
-| **💾 CHECKPOINT** | Auto / Claude 4, GPT-4.1 | ✅ **Read file, Fetch rules**<br>✅ **Edit** (entire category) | ❌ **Run** (entire category)<br>❌ **MCP** (servers)<br>❌ **Web, Codebase** |
-| **✅ FINISH** | Auto / Claude 4, GPT-4.1 | ✅ **Read file, List directory, Search files, Grep**<br>✅ **Edit & Reapply** | ❌ **Delete file**<br>❌ **Run** (entire category)<br>❌ **MCP** (servers)<br>❌ **Codebase, Web** |
-| **🧠 STRATEGY_SESSION** | GPT-o3, Claude 4 Thinking, Gemini 2.5 Pro | ✅ **Search** (entire category)<br>✅ **Edit** (entire category) | ❌ **Run** (entire category) |
+| **📋 PLAN** | GPT-o3, Claude 4 Thinking, Gemini 2.5 Pro | ✅ **Search**<br>✅ **Read file, Fetch rules** | ❌ **Edit**<br>❌ **Run**<br>❌ **MCP** (servers) |
+| **⚡ ACT** | Claude 4, GPT-4.1 | ✅ **Search**<br>✅ **Edit**<br>✅ **Run** | ❔ **MCP** (only if needed) |
+| **💾 CHECKPOINT** | Auto / Claude 4, GPT-4.1 | ✅ **Read file, Fetch rules**<br>✅ **Edit** | ❌ **Run**<br>❌ **MCP** (servers)<br>❌ **Web, Codebase** |
+| **✅ FINISH** | Auto / Claude 4, GPT-4.1 | ✅ **Read file, List directory, Search files, Grep**<br>✅ **Edit & Reapply** | ❌ **Delete file**<br>❌ **Run**<br>❌ **MCP** (servers)<br>❌ **Codebase, Web** |
+| **🧠 ARCHITECT** | GPT-o3, Claude 4 Thinking, Gemini 2.5 Pro | ✅ **Search**<br>✅ **Edit** | ❌ **Run** |
 
 ### Detailed Tool Configuration
 
@@ -143,7 +303,7 @@ Configure each mode in Cursor's settings as follows:
 - **❌ Delete file**: Safety measure against accidental file deletion
 - **❌ Run Category**: Finalization doesn't require terminal commands
 
-**🧠 STRATEGY_SESSION Mode** - Comprehensive planning:
+**🧠 ARCHITECT Mode** - Comprehensive planning:
 - **✅ Search Category**: Essential for Q&A phase and thorough analysis
 - **✅ Edit Category**: Required for generating detailed implementation plans
 - **❌ Run Category**: Planning doesn't require terminal operations
